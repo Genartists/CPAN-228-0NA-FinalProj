@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('About Us')}"></head>
+<body>
+<div class="app-layout">
+    <aside th:replace="~{fragments/navbar :: sidebar('about')}"></aside>
+
+    <div class="app-main">
+        <header class="app-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button"
+                        onclick="document.getElementById('appSidebar').classList.toggle('show')">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <h1 class="page-headline">About HumberGear</h1>
+            </div>
+            <a th:href="@{/inventory}" class="btn btn-dark rounded-pill px-3 py-2 small fw-semibold">
+                Explore Catalog
+            </a>
+        </header>
+
+        <section class="givingli-section">
+            <div class="surface-box p-4 p-md-5 mb-4">
+                <span class="badge bg-dark rounded-pill px-3 py-2 mb-3">Enterprise Distribution</span>
+                <h2 class="fw-bold mb-3">High-Performance Hardware Logistics</h2>
+                <p class="text-secondary leading-relaxed mb-3">
+                    HumberGear is a specialized inventory tracking and warehouse distribution system engineered to fulfill
+                    hardware requirements for PC builders, gaming systems, and computing workstations across Canadian facilities.
+                </p>
+                <p class="text-secondary leading-relaxed mb-0">
+                    Direct supplier partnerships with industry leaders like NVIDIA, AMD, Intel, ASUS, Corsair, Logitech, and MSI
+                    ensure factory authenticity, batch tracking, and real-time inventory visibility.
+                </p>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Regional Distribution Network</h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="surface-box p-4 h-100">
+                        <div class="avatar-circle mb-3">A</div>
+                        <h5 class="fw-bold">Toronto Hub &bull; Zone A</h5>
+                        <p class="text-secondary small mb-0">
+                            Central automated facility handling high-throughput GPU intake and immediate local regional distribution.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="surface-box p-4 h-100">
+                        <div class="avatar-circle mb-3">B</div>
+                        <h5 class="fw-bold">Vancouver Depot &bull; Zone B</h5>
+                        <p class="text-secondary small mb-0">
+                            Pacific gateway depot servicing western logistics routes and chassis/PSU warehousing.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="surface-box p-4 h-100">
+                        <div class="avatar-circle mb-3">C</div>
+                        <h5 class="fw-bold">Montreal Facility &bull; Zone C</h5>
+                        <p class="text-secondary small mb-0">
+                            Eastern transit node equipped with RMA quality certification benches and ESD storage suites.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+</html>

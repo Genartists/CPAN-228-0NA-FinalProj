@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="sidebar(activePage)" class="app-sidebar" id="appSidebar">
+    <a th:href="@{/}" class="brand-logo">
+        <div class="brand-icon">
+            <i class="bi bi-cpu"></i>
+        </div>
+        <span>HumberGear</span>
+    </a>
+
+    <nav class="sidebar-nav">
+        <a th:href="@{/}" class="sidebar-link" th:classappend="${activePage == 'home'} ? 'active' : ''">
+            <i class="bi bi-house"></i>
+            <span>Home</span>
+        </a>
+        <a th:href="@{/inventory}" class="sidebar-link" th:classappend="${activePage == 'inventory'} ? 'active' : ''">
+            <i class="bi bi-shop"></i>
+            <span>Catalog</span>
+        </a>
+        <a th:href="@{/inventory/new}" class="sidebar-link" th:classappend="${activePage == 'new-item'} ? 'active' : ''">
+            <i class="bi bi-plus-circle"></i>
+            <span>Register SKU</span>
+        </a>
+        <a th:href="@{/about}" class="sidebar-link" th:classappend="${activePage == 'about'} ? 'active' : ''">
+            <i class="bi bi-info-circle"></i>
+            <span>About Us</span>
+        </a>
+        <a th:href="@{/depots}" class="sidebar-link" th:classappend="${activePage == 'depots'} ? 'active' : ''">
+            <i class="bi bi-geo-alt"></i>
+            <span>Depots</span>
+        </a>
+        <a th:href="@{/h2-console}" target="_blank" class="sidebar-link">
+            <i class="bi bi-database"></i>
+            <span>H2 Console</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="user-profile-badge">
+            <div class="avatar-circle">HG</div>
+            <div class="d-flex flex-column" style="line-height: 1.2;">
+                <span class="small fw-bold text-dark">Warehouse Hub</span>
+                <span class="text-muted" style="font-size: 0.75rem;">Toronto Zone A</span>
+            </div>
+        </div>
+    </div>
+</aside>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Register Hardware SKU')}"></head>
+<body>
+<div class="app-layout">
+    <aside th:replace="~{fragments/navbar :: sidebar('new-item')}"></aside>
+
+    <div class="app-main">
+        <header class="app-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button"
+                        onclick="document.getElementById('appSidebar').classList.toggle('show')">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <div>
+                    <h1 class="page-headline">Register Hardware SKU</h1>
+                    <div class="small text-secondary mt-1">Submit new components to the warehouse inventory catalog.</div>
+                </div>
+            </div>
+            <a th:href="@{/inventory}" class="btn btn-outline-secondary rounded-pill px-3 py-2 small">
+                <i class="bi bi-arrow-left me-1"></i> Back to Catalog
+            </a>
+        </header>
+
+        <section class="givingli-section">
+            <div class="row justify-content-center">
+                <div class="col-12 col-xl-9">
+                    <div class="surface-box">
+                        <form th:action="@{/inventory/new}" th:object="${hardwareItem}" method="post" novalidate>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="sku" class="form-label small fw-bold text-dark">SKU Code <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{sku}" id="sku" class="form-control rounded-pill px-3"
+                                           th:classappend="${#fields.hasErrors('sku')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., NX-GPU-4090">
+                                    <div class="invalid-feedback ps-2" th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}">
+                                        SKU error
+                                    </div>
+                                    <div class="form-text small ps-2">Format: e.g., NX-GPU-4090 (uppercase letters and numbers separated by hyphens).</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label small fw-bold text-dark">Hardware Name <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{name}" id="name" class="form-control rounded-pill px-3"
+                                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., GeForce RTX 4090 ROG Strix">
+                                    <div class="invalid-feedback ps-2" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                                        Name error
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="brand" class="form-label small fw-bold text-dark">Manufacturer Brand <span class="text-danger">*</span></label>
+                                    <select th:field="*{brand}" id="brand" class="form-select rounded-pill px-3"
+                                            th:classappend="${#fields.hasErrors('brand')} ? 'is-invalid' : ''">
+                                        <option value="">-- Choose Brand --</option>
+                                        <option th:each="b : ${brands}" th:value="${b}" th:text="${b}"></option>
+                                    </select>
+                                    <div class="invalid-feedback ps-2" th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}">
+                                        Brand error
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="category" class="form-label small fw-bold text-dark">Category <span class="text-danger">*</span></label>
+                                    <select th:field="*{category}" id="category" class="form-select rounded-pill px-3"
+                                            th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''">
+                                        <option value="">-- Choose Category --</option>
+                                        <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+                                    </select>
+                                    <div class="invalid-feedback ps-2" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">
+                                        Category error
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="price" class="form-label small fw-bold text-dark">Price ($ CAD) <span class="text-danger">*</span></label>
+                                    <div class="input-group has-validation">
+                                        <span class="input-group-text rounded-start-pill bg-light border-end-0">$</span>
+                                        <input type="number" step="0.01" th:field="*{price}" id="price"
+                                               class="form-control rounded-end-pill px-3"
+                                               th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''"
+                                               placeholder="e.g., 899.99">
+                                        <div class="invalid-feedback ps-2" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">
+                                            Price error
+                                        </div>
+                                    </div>
+                                    <div class="form-text small ps-2">Between $1.00 and $10,000.00.</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="stockQuantity" class="form-label small fw-bold text-dark">Stock Units <span class="text-danger">*</span></label>
+                                    <input type="number" th:field="*{stockQuantity}" id="stockQuantity"
+                                           class="form-control rounded-pill px-3"
+                                           th:classappend="${#fields.hasErrors('stockQuantity')} ? 'is-invalid' : ''"
+                                           placeholder="e.g., 20">
+                                    <div class="invalid-feedback ps-2" th:if="${#fields.hasErrors('stockQuantity')}" th:errors="*{stockQuantity}">
+                                        Stock quantity error
+                                    </div>
+                                    <div class="form-text small ps-2">Between 0 and 10,000 units.</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="warehouseLocation" class="form-label small fw-bold text-dark">Warehouse Distribution Depot <span class="text-danger">*</span></label>
+                                    <select th:field="*{warehouseLocation}" id="warehouseLocation"
+                                            class="form-select rounded-pill px-3"
+                                            th:classappend="${#fields.hasErrors('warehouseLocation')} ? 'is-invalid' : ''">
+                                        <option value="">-- Choose Distribution Centre --</option>
+                                        <option th:each="loc : ${warehouses}" th:value="${loc}" th:text="${loc}"></option>
+                                    </select>
+                                    <div class="invalid-feedback ps-2" th:if="${#fields.hasErrors('warehouseLocation')}" th:errors="*{warehouseLocation}">
+                                        Warehouse depot error
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="description" class="form-label small fw-bold text-dark">Technical Notes & Specifications <span class="text-danger">*</span></label>
+                                    <textarea th:field="*{description}" id="description" rows="4"
+                                              class="form-control rounded-4 p-3"
+                                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                                              placeholder="Enter hardware architecture details, cooling specs, interface speeds, or bundle notes..."></textarea>
+                                    <div class="invalid-feedback ps-2" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                                        Description error
+                                    </div>
+                                    <div class="form-text small ps-2">Between 10 and 500 characters.</div>
+                                </div>
+
+                                <div class="col-12 d-flex justify-content-end gap-2 pt-3 border-top">
+                                    <a th:href="@{/inventory}" class="btn btn-outline-secondary rounded-pill px-4">
+                                        Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-dark rounded-pill px-4 fw-semibold">
+                                        Save Hardware
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+</html>

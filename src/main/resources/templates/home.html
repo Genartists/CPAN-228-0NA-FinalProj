@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Dashboard')}"></head>
+<body>
+<div class="app-layout">
+    <aside th:replace="~{fragments/navbar :: sidebar('home')}"></aside>
+
+    <div class="app-main">
+        <header class="app-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button"
+                        onclick="document.getElementById('appSidebar').classList.toggle('show')">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <h1 class="page-headline">Home</h1>
+            </div>
+
+            <form th:action="@{/inventory}" method="get" class="search-pill-container">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="search" class="search-pill" placeholder="Search hardware, brands, SKUs...">
+            </form>
+
+            <a th:href="@{/inventory/new}" class="btn btn-dark rounded-pill px-3 py-2 small fw-semibold">
+                <i class="bi bi-plus-lg me-1"></i> Register SKU
+            </a>
+        </header>
+
+        <div class="chip-scroll-row">
+            <a th:href="@{/inventory}" class="filter-chip active">All Warehouse</a>
+            <a th:href="@{/inventory(category='GPU')}" class="filter-chip">Graphics Cards</a>
+            <a th:href="@{/inventory(category='CPU')}" class="filter-chip">Processors</a>
+            <a th:href="@{/inventory(category='Motherboard')}" class="filter-chip">Motherboards</a>
+            <a th:href="@{/inventory(category='RAM')}" class="filter-chip">Memory & RAM</a>
+            <a th:href="@{/inventory(category='Storage')}" class="filter-chip">Solid State Drives</a>
+            <a th:href="@{/inventory(category='Peripheral')}" class="filter-chip">Peripherals</a>
+        </div>
+
+        <section class="givingli-section pt-0">
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-lg-3">
+                    <div class="surface-box p-3">
+                        <span class="text-secondary small fw-medium">Active SKUs</span>
+                        <div class="h3 fw-bold mt-1 mb-0" th:text="${totalSkus}">0</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">Catalog components</small>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="surface-box p-3">
+                        <span class="text-secondary small fw-medium">Units in Stock</span>
+                        <div class="h3 fw-bold mt-1 mb-0" th:text="${totalUnits}">0</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">Physical inventory</small>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="surface-box p-3">
+                        <span class="text-secondary small fw-medium">Total Value</span>
+                        <div class="h3 fw-bold mt-1 mb-0" th:text="'$' + ${#numbers.formatDecimal(inventoryValue, 1, 'COMMA', 2, 'POINT')}">$0.00</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">Asset valuation</small>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="surface-box p-3">
+                        <span class="text-secondary small fw-medium">Low Stock</span>
+                        <div class="h3 fw-bold mt-1 mb-0 text-warning" th:text="${lowStockCount}">0</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">&le; 10 units remaining</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Recent Warehouse Arrivals</h2>
+                <a th:href="@{/inventory}" class="view-all-link">
+                    View all <i class="bi bi-chevron-right small"></i>
+                </a>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3" th:each="item, iterStat : ${recentItems}" th:if="${iterStat.index < 4}">
+                    <div class="givingli-card">
+                        <div class="card-banner"
+                             th:classappend="${#strings.equalsIgnoreCase(item.brand, 'ASUS')} ? 'banner-asus' : (${#strings.equalsIgnoreCase(item.brand, 'AMD')} ? 'banner-amd' : (${#strings.equalsIgnoreCase(item.brand, 'NVIDIA')} ? 'banner-nvidia' : (${#strings.equalsIgnoreCase(item.brand, 'Intel')} ? 'banner-intel' : (${#strings.equalsIgnoreCase(item.brand, 'Corsair')} ? 'banner-corsair' : (${#strings.equalsIgnoreCase(item.brand, 'Logitech')} ? 'banner-logitech' : (${#strings.equalsIgnoreCase(item.brand, 'MSI')} ? 'banner-msi' : 'banner-default'))))))">
+                            <span class="brand-hero-tag" th:text="${item.brand}">BRAND</span>
+                        </div>
+                        <div class="card-content-area">
+                            <span class="product-sku-pill" th:text="${item.sku}">SKU</span>
+                            <h3 class="product-title" th:text="${item.name}">Name</h3>
+                            <p class="product-desc" th:text="${item.description}">Description</p>
+                            <div class="card-bottom-row">
+                                <span class="product-price" th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}">$0.00</span>
+                                <span th:if="${item.stockQuantity > 10}" class="stock-tag stock-tag-in" th:text="${item.stockQuantity} + ' in stock'">In Stock</span>
+                                <span th:if="${item.stockQuantity > 0 and item.stockQuantity <= 10}" class="stock-tag stock-tag-low" th:text="${item.stockQuantity} + ' low stock'">Low Stock</span>
+                                <span th:if="${item.stockQuantity == 0}" class="stock-tag stock-tag-out">Out of stock</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Distribution Depots</h2>
+                <a th:href="@{/about}" class="view-all-link">
+                    Learn more <i class="bi bi-chevron-right small"></i>
+                </a>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="surface-box h-100">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-geo-alt-fill text-dark"></i>
+                            <h6 class="fw-bold mb-0">Toronto Hub &bull; Zone A</h6>
+                        </div>
+                        <p class="text-secondary small mb-0">
+                            Primary central distribution depot for GPU intake, high-frequency RAM, and automated sorting.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="surface-box h-100">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-geo-alt-fill text-dark"></i>
+                            <h6 class="fw-bold mb-0">Vancouver Depot &bull; Zone B</h6>
+                        </div>
+                        <p class="text-secondary small mb-0">
+                            Pacific logistics hub specializing in workstation chassis, power supplies, and AM5 motherboards.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="surface-box h-100">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-geo-alt-fill text-dark"></i>
+                            <h6 class="fw-bold mb-0">Montreal Facility &bull; Zone C</h6>
+                        </div>
+                        <p class="text-secondary small mb-0">
+                            Eastern regional depot with dedicated RMA diagnostics testing and climate-monitored NVMe storage.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+</html>

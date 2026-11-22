@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Hardware Catalog')}"></head>
+<body>
+<div class="app-layout">
+    <aside th:replace="~{fragments/navbar :: sidebar('inventory')}"></aside>
+
+    <div class="app-main">
+        <header class="app-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button"
+                        onclick="document.getElementById('appSidebar').classList.toggle('show')">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <h1 class="page-headline">Shop Hardware</h1>
+            </div>
+
+            <form th:action="@{/inventory}" method="get" class="search-pill-container">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="search" class="search-pill" placeholder="Search by name, SKU, or specs..."
+                       th:value="${search}">
+                <input type="hidden" name="category" th:value="${selectedCategory}">
+                <input type="hidden" name="brand" th:value="${selectedBrand}">
+                <input type="hidden" name="sortBy" th:value="${sortBy}">
+                <input type="hidden" name="sortDir" th:value="${sortDir}">
+            </form>
+
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="@{/inventory/new}" class="btn btn-dark rounded-pill px-3 py-2 small fw-semibold">
+                    <i class="bi bi-plus-lg me-1"></i> Add Hardware
+                </a>
+            </div>
+        </header>
+
+        <div class="px-4 px-md-5 pt-1" th:if="${successMessage}">
+            <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 py-2 small mb-2 shadow-sm d-flex align-items-center" role="alert">
+                <i class="bi bi-check-circle-fill me-2 text-success"></i>
+                <span th:text="${successMessage}">Success message</span>
+                <button type="button" class="btn-close ms-auto p-2" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div class="chip-scroll-row">
+            <a th:href="@{/inventory(search=${search}, brand=${selectedBrand}, sortBy=${sortBy}, sortDir=${sortDir})}"
+               class="filter-chip"
+               th:classappend="${selectedCategory == null or selectedCategory == ''} ? 'active' : ''">
+                All Components
+            </a>
+            <a th:each="cat : ${categories}"
+               th:href="@{/inventory(category=${cat}, search=${search}, brand=${selectedBrand}, sortBy=${sortBy}, sortDir=${sortDir})}"
+               class="filter-chip"
+               th:classappend="${selectedCategory == cat} ? 'active' : ''"
+               th:text="${cat}">
+                Category
+            </a>
+        </div>
+
+        <section class="givingli-section pt-0">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 p-3 bg-white border rounded-4">
+                <form th:action="@{/inventory}" method="get" class="d-flex flex-wrap align-items-center gap-2 w-100">
+                    <input type="hidden" name="search" th:value="${search}">
+                    <input type="hidden" name="category" th:value="${selectedCategory}">
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-secondary small fw-medium">Brand:</span>
+                        <select name="brand" class="form-select form-select-sm rounded-pill" style="min-width: 140px;" onchange="this.form.submit()">
+                            <option value="">All Brands</option>
+                            <option th:each="b : ${brands}" th:value="${b}" th:text="${b}" th:selected="${b == selectedBrand}"></option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-secondary small fw-medium">Sort By:</span>
+                        <select name="sortBy" class="form-select form-select-sm rounded-pill" style="min-width: 140px;" onchange="this.form.submit()">
+                            <option value="createdAt" th:selected="${sortBy == 'createdAt'}">Date Added</option>
+                            <option value="name" th:selected="${sortBy == 'name'}">Product Name</option>
+                            <option value="price" th:selected="${sortBy == 'price'}">Price</option>
+                            <option value="stockQuantity" th:selected="${sortBy == 'stockQuantity'}">Stock Quantity</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-secondary small fw-medium">Order:</span>
+                        <select name="sortDir" class="form-select form-select-sm rounded-pill" style="min-width: 110px;" onchange="this.form.submit()">
+                            <option value="desc" th:selected="${sortDir == 'desc'}">Descending</option>
+                            <option value="asc" th:selected="${sortDir == 'asc'}">Ascending</option>
+                        </select>
+                    </div>
+
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <span class="text-muted small">
+                            <strong class="text-dark" th:text="${#lists.size(items)}">0</strong> products
+                        </span>
+                        <a th:href="@{/inventory}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" title="Clear Filters">
+                            Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="row g-4" th:if="${not #lists.isEmpty(items)}">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3" th:each="item : ${items}">
+                    <div class="givingli-card">
+                        <div class="card-banner"
+                             th:classappend="${#strings.equalsIgnoreCase(item.brand, 'ASUS')} ? 'banner-asus' : (${#strings.equalsIgnoreCase(item.brand, 'AMD')} ? 'banner-amd' : (${#strings.equalsIgnoreCase(item.brand, 'NVIDIA')} ? 'banner-nvidia' : (${#strings.equalsIgnoreCase(item.brand, 'Intel')} ? 'banner-intel' : (${#strings.equalsIgnoreCase(item.brand, 'Corsair')} ? 'banner-corsair' : (${#strings.equalsIgnoreCase(item.brand, 'Logitech')} ? 'banner-logitech' : (${#strings.equalsIgnoreCase(item.brand, 'MSI')} ? 'banner-msi' : 'banner-default'))))))">
+                            <span class="brand-hero-tag" th:text="${item.brand}">BRAND</span>
+                        </div>
+
+                        <div class="card-content-area">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="product-sku-pill" th:text="${item.sku}">SKU-001</span>
+                                <span class="small text-muted" th:text="${item.category}">Category</span>
+                            </div>
+
+                            <h3 class="product-title" th:text="${item.name}">Hardware Name</h3>
+                            <p class="product-desc" th:text="${item.description}">Technical specifications and component description.</p>
+
+                            <div class="small text-secondary mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                <span th:text="${item.warehouseLocation}">Location</span>
+                            </div>
+
+                            <div class="card-bottom-row">
+                                <span class="product-price" th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}">$0.00</span>
+
+                                <span th:if="${item.stockQuantity > 10}" class="stock-tag stock-tag-in" th:text="${item.stockQuantity} + ' in stock'">In Stock</span>
+                                <span th:if="${item.stockQuantity > 0 and item.stockQuantity <= 10}" class="stock-tag stock-tag-low" th:text="${item.stockQuantity} + ' low stock'">Low Stock</span>
+                                <span th:if="${item.stockQuantity == 0}" class="stock-tag stock-tag-out">Out of stock</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(items)}" class="surface-box text-center py-5">
+                <i class="bi bi-bag-x fs-1 text-muted mb-2"></i>
+                <h5 class="fw-bold">No hardware found</h5>
+                <p class="text-secondary small mb-3">No products matched your active filters or search terms.</p>
+                <a th:href="@{/inventory}" class="btn btn-outline-dark rounded-pill px-4 btn-sm">Clear All Filters</a>
+            </div>
+        </section>
+
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+</html>
